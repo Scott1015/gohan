@@ -146,14 +146,14 @@ Current limits to be aware of:
 ```text
 gohan/
   apps/
-    control-plane/
+    control-plane/     # in-memory HTTP server exposing task, approval, and runtime-event routes
   services/
-    probe-bridge/
-    browser-worker/
+    probe-bridge/      # Python bridge forwarding remote runtime events and heartbeats to Gohan
+    browser-worker/    # mock browser-task execution loop and result reporting boundary
   packages/
-    contracts/
-    core/
-  docs/
+    contracts/         # shared runtime, control-plane, probe, and browser-worker types
+    core/              # runtime decision logic and task workflow helpers
+  docs/                # demo, protocol, architecture, and release-prep documentation
 ```
 
 ## Development
@@ -177,10 +177,3 @@ npm run check:release
 - [CONTRIBUTING.md](CONTRIBUTING.md): contribution workflow
 - [docs/FIRST_RELEASE_CHECKLIST.md](docs/FIRST_RELEASE_CHECKLIST.md): release-prep checklist
 - [docs/LICENSE_OPTIONS.md](docs/LICENSE_OPTIONS.md): license tradeoffs
-- [docs/PUBLISH_SEQUENCE.md](docs/PUBLISH_SEQUENCE.md): recommended publish sequence
-
-## Project Notes
-
-- Basic GitHub Actions CI lives in [.github/workflows/ci.yml](.github/workflows/ci.yml).
-- Issue and PR hygiene is preconfigured under [.github](.github).
-- The first open source version is intentionally narrower than the internal Goku platform.
