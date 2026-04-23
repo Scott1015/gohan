@@ -1,0 +1,47 @@
+name: Feature Request
+description: Suggest a scoped improvement to Gohan's runtime control-plane extraction
+title: "[Feature] "
+labels:
+  - enhancement
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What runtime-management problem are you trying to solve?
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed Change
+      description: Keep this scoped and concrete
+    validations:
+      required: true
+
+  - type: textarea
+    id: boundary
+    attributes:
+      label: Boundary Impact
+      description: Does this affect contracts, routes, worker/probe behavior, or state semantics?
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - contracts
+        - core runtime logic
+        - control plane
+        - probe bridge
+        - browser worker
+        - docs/demo
+    validations:
+      required: true
+
+  - type: textarea
+    id: notes
+    attributes:
+      label: Additional Notes
+

@@ -1,0 +1,26 @@
+{
+  "name": "gohan",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Kubernetes-inspired control plane for long-running agents",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "workspaces": [
+    "apps/*",
+    "services/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "tsc -b packages/contracts packages/core apps/control-plane services/browser-worker",
+    "demo": "./scripts/demo-control-plane.sh",
+    "check:release": "./scripts/check-release.sh",
+    "typecheck": "tsc -b packages/contracts packages/core apps/control-plane services/browser-worker --pretty false",
+    "test": "npm run build && node --test packages/core/dist/*.test.js apps/control-plane/dist/*.test.js services/browser-worker/dist/*.test.js"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "typescript": "^5.8.0"
+  }
+}

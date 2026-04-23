@@ -1,0 +1,17 @@
+{
+  "files": [],
+  "references": [
+    {
+      "path": "./packages/contracts"
+    },
+    {
+      "path": "./packages/core"
+    },
+    {
+      "path": "./apps/control-plane"
+    },
+    {
+      "path": "./services/browser-worker"
+    }
+  ]
+}
