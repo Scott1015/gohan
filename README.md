@@ -103,7 +103,7 @@ The repository is still early, but it is no longer just a naming exercise. The c
 
 ## Current Limitations
 
-This is still an early-stage extraction from the internal Goku system. That means a few things are true at the same time:
+This is still an early-stage public extraction. That means a few things are true at the same time:
 
 - the direction is intentional
 - the abstractions are real
@@ -114,7 +114,7 @@ Current limits to be aware of:
 - the control-plane app is still demo-grade and uses an in-memory store
 - some public interfaces will still change before a real `v0.1`
 - deployment and persistence stories are intentionally thin right now
-- the probe-bridge baseline is extracted from OpenClaw-oriented internals, while the public runtime protocol is being shaped to support broader adapters over time
+- the current probe-bridge baseline is still OpenClaw-oriented, while the public runtime protocol is being shaped to support broader adapters over time
 
 ## Architecture
 

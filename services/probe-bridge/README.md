@@ -2,7 +2,7 @@
 
 Execution-side bridge for remote agent runtimes.
 
-The probe bridge is the first real extraction from the internal Goku execution plane. It keeps a narrow job:
+The probe bridge is the first extracted execution-side adapter in this repo. It keeps a narrow job:
 
 - watch runtime session output
 - batch and forward raw runtime events
@@ -30,7 +30,7 @@ It intentionally does not include:
 - attachment download
 - platform-side parsing
 - agent CRUD flows
-- internal config management surfaces
+- environment-specific config management surfaces
 
 ## Compatibility
 
@@ -40,7 +40,7 @@ The bridge now prefers the public Gohan runtime protocol first:
 - `POST /runtime/heartbeats`
 - `GET /runtime/agents?probeId=<probeId>`
 
-Legacy internal Goku compatibility is still kept as fallback during extraction:
+Legacy compatibility routes are still kept as fallback during the transition:
 
 - `POST /api/probe/events/raw/batch`
 - `POST /api/probe/heartbeat`

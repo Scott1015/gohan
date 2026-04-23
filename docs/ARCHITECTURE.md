@@ -92,4 +92,4 @@ The first useful public boundary is:
 - `services/browser-worker`: extracted browser task worker
 - `apps/control-plane`: thin control-plane app that speaks those contracts
 
-The repo is not trying to ship the entire internal Goku product in the first cut.
+The repo is not trying to ship every surrounding platform concern in the first cut.

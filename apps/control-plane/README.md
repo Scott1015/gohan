@@ -10,7 +10,7 @@ Its first responsibilities are expected to be:
 - runtime-event ingestion
 - online-state derivation from heartbeat plus session state
 
-This should stay smaller than the internal Goku platform and only contain the runtime-management core needed to make the open source story coherent.
+This should stay intentionally small and only contain the runtime-management core needed to make the open source story coherent.
 
 ## Extraction Direction
 

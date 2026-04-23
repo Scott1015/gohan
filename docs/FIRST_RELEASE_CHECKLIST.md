@@ -28,7 +28,7 @@ This is the practical checklist for turning the current extraction into a first 
 - keep `npm run typecheck` green
 - keep `npm test` green
 - keep `services/probe-bridge/.venv/bin/python -m unittest -v test_app.py` green
-- avoid dragging internal deployment or SaaS-only modules into the public repo
+- avoid dragging environment-specific deployment or SaaS-only modules into the public repo
 
 ## Suggested v0.1 Scope
 

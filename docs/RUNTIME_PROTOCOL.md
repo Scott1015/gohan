@@ -2,7 +2,7 @@
 
 This document describes the current public-facing runtime protocol between the control plane and execution-side services.
 
-The protocol is intentionally small. It is meant to support the first coherent open source flow, not to mirror every internal Goku endpoint.
+The protocol is intentionally small. It is meant to support the first coherent open source flow, not to mirror every legacy or compatibility route.
 
 ## Current Routes
 
@@ -97,7 +97,7 @@ Current behavior:
 ## Protocol Notes
 
 - `probe-bridge` now prefers these public routes first.
-- Legacy internal `/api/probe/*` routes are still used as fallback for extraction compatibility.
+- Legacy `/api/probe/*` routes are still used as compatibility fallback during the transition.
 - Raw-event parsing still lives on the control-plane side, consistent with the design rule that the probe stays transport-focused.
 
 ## Browser Worker Boundary

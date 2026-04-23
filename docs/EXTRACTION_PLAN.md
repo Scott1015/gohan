@@ -1,6 +1,6 @@
 # Extraction Plan
 
-This document records the intended first open source cut from the internal Goku codebase.
+This document records the intended first open source cut for Gohan.
 
 ## Goal
 
@@ -75,7 +75,7 @@ Shared contract:
 
 - prefer clean interfaces over copying large internal modules
 - rename internal product-specific terms when they leak unnecessary baggage
-- keep data models understandable without the rest of Goku
+- keep data models understandable without the rest of the surrounding platform
 - do not preserve internal complexity just because it already exists
 
 ## Suggested First Demo
