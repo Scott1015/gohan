@@ -13,6 +13,12 @@ dist/
 coverage/
 *.tsbuildinfo
 
+# compiled TS artifacts that may land in src/ (composite projects)
+**/src/*.js
+**/src/*.d.ts
+**/src/*.js.map
+**/src/*.d.ts.map
+
 # python
 .venv/
 __pycache__/
