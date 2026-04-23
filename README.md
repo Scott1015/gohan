@@ -20,6 +20,8 @@ python3 -m pip install -r services/probe-bridge/requirements.txt
 npm run demo:joint
 ```
 
+<img src="docs/assets/gohan-control-plane-probe-bridge-demo.gif" alt="Animated preview of the Gohan joint control-plane and probe-bridge demo" width="920" />
+
 The joint demo starts a control plane plus a probe bridge, then walks one task through:
 
 1. probe heartbeat
@@ -30,7 +32,7 @@ The joint demo starts a control plane plus a probe bridge, then walks one task t
 6. approval resolution
 7. task completion
 
-See [docs/LOCAL_DEMO.md](docs/LOCAL_DEMO.md) for the scripted flow, fallback single-process demo, and checked-in terminal transcript.
+See [docs/LOCAL_DEMO.md](docs/LOCAL_DEMO.md) for the scripted flow, GIF generation, fallback single-process demo, and checked-in terminal transcript.
 The latest plain-text transcript lives at [docs/assets/gohan-control-plane-probe-bridge-demo.txt](docs/assets/gohan-control-plane-probe-bridge-demo.txt).
 
 ## Why Gohan Exists

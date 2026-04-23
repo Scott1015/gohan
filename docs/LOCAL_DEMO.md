@@ -61,6 +61,21 @@ That command writes:
 
 The checked-in transcript is meant to make the first-run story easy to skim on GitHub without replay tooling.
 
+## GIF Preview
+
+Generate the animated preview used in the README:
+
+```bash
+./services/probe-bridge/.venv/bin/pip install -r scripts/requirements-visuals.txt
+npm run demo:gif
+```
+
+That command renders:
+
+- `docs/assets/gohan-control-plane-probe-bridge-demo.gif`
+
+The renderer turns the checked-in transcript into a terminal-style animation, so the preview stays aligned with the actual demo output instead of being a hand-made mockup.
+
 ## Demo Shape
 
 The joint demo intentionally keeps the runtime simple:
