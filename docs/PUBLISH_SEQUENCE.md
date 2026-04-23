@@ -30,13 +30,13 @@ git commit -m "Initial open source extraction for Gohan"
 Private first:
 
 ```bash
-/Users/Scott/bin/gh repo create Scott1015/gohan --private --source=. --remote=origin --push
+gh repo create Scott1015/gohan --private --source=. --remote=origin --push
 ```
 
 Public directly:
 
 ```bash
-/Users/Scott/bin/gh repo create Scott1015/gohan --public --source=. --remote=origin --push
+gh repo create Scott1015/gohan --public --source=. --remote=origin --push
 ```
 
 If the repository is already created remotely:

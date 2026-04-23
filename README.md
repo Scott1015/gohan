@@ -158,7 +158,6 @@ gohan/
   docs/
     ARCHITECTURE.md
     EXTRACTION_PLAN.md
-    SOURCE_MAP.md
 ```
 
 ## Design Principles
