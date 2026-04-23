@@ -6,7 +6,7 @@ import { createControlPlaneServer } from "./server.js"
 
 async function withServer<T>(fn: (baseUrl: string) => Promise<T>): Promise<T> {
   const { server } = createControlPlaneServer()
-  await new Promise<void>((resolve) => server.listen(0, resolve))
+  await new Promise<void>((resolve) => server.listen(0, "127.0.0.1", resolve))
 
   try {
     const address = server.address()
