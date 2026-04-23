@@ -23,7 +23,10 @@
   ],
   "scripts": {
     "build": "tsc -b packages/contracts packages/core apps/control-plane services/browser-worker",
-    "demo": "./scripts/demo-control-plane.sh",
+    "demo": "bash ./scripts/demo-control-plane.sh",
+    "demo:control-plane": "bash ./scripts/demo-control-plane.sh",
+    "demo:joint": "bash ./scripts/demo-control-plane-probe-bridge.sh",
+    "demo:record": "bash ./scripts/record-demo-control-plane-probe-bridge.sh",
     "check:release": "./scripts/check-release.sh",
     "typecheck": "tsc -b packages/contracts packages/core apps/control-plane services/browser-worker --pretty false",
     "test": "npm run build && node --test packages/core/dist/*.test.js apps/control-plane/dist/*.test.js services/browser-worker/dist/*.test.js"

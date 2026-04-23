@@ -25,6 +25,26 @@ from flask import Flask, jsonify, request
 from runtime_client import OpenClawRuntimeClient
 
 
+def env_int(name: str, default: int) -> int:
+    raw = os.getenv(name)
+    if raw is None or not raw.strip():
+        return default
+    try:
+        return int(raw)
+    except ValueError:
+        return default
+
+
+def env_float(name: str, default: float) -> float:
+    raw = os.getenv(name)
+    if raw is None or not raw.strip():
+        return default
+    try:
+        return float(raw)
+    except ValueError:
+        return default
+
+
 class Config:
     OPENCLAW_HOME = os.getenv("OPENCLAW_HOME", os.path.expanduser("~"))
     OPENCLAW_STATE_DIR = os.path.join(OPENCLAW_HOME, ".openclaw")
@@ -37,16 +57,18 @@ class Config:
         "http://localhost:3000",
     )
     PROBE_AGENTS_JSON = os.getenv("GOHAN_PROBE_AGENTS_JSON", "")
-    PROBE_PORT = int(os.getenv("PROBE_PORT", "3001"))
+    PROBE_HOST = os.getenv("PROBE_HOST", "127.0.0.1")
+    PROBE_PORT = env_int("PROBE_PORT", 3001)
     PROBE_ID = os.getenv("PROBE_ID", "probe-local-1")
-    RETRY_COUNT = 3
-    TIMEOUT = 30
-    HEARTBEAT_INTERVAL = 30
-    BATCH_SIZE = 10
-    BATCH_INTERVAL = 1.0
-    INTERACTIVE_BATCH_INTERVAL = 0.15
-    SESSION_POLL_INTERVAL = 5
-    MAX_BACKFILL_BYTES = 5 * 1024 * 1024
+    RETRY_COUNT = env_int("GOHAN_RETRY_COUNT", 3)
+    TIMEOUT = env_int("GOHAN_REQUEST_TIMEOUT", 30)
+    HEARTBEAT_INTERVAL = env_float("GOHAN_HEARTBEAT_INTERVAL", 30.0)
+    HEARTBEAT_LOOP_INTERVAL = env_float("GOHAN_HEARTBEAT_LOOP_INTERVAL", 5.0)
+    BATCH_SIZE = env_int("GOHAN_BATCH_SIZE", 10)
+    BATCH_INTERVAL = env_float("GOHAN_BATCH_INTERVAL", 1.0)
+    INTERACTIVE_BATCH_INTERVAL = env_float("GOHAN_INTERACTIVE_BATCH_INTERVAL", 0.15)
+    SESSION_POLL_INTERVAL = env_float("GOHAN_SESSION_POLL_INTERVAL", 5.0)
+    MAX_BACKFILL_BYTES = env_int("GOHAN_MAX_BACKFILL_BYTES", 5 * 1024 * 1024)
 
 
 def utc_now_iso() -> str:
@@ -665,7 +687,7 @@ class SessionManager:
 
     def _heartbeat_loop(self) -> None:
         while self._running:
-            time.sleep(5)
+            time.sleep(Config.HEARTBEAT_LOOP_INTERVAL)
             if self.reporter.seconds_since_last_report() < Config.HEARTBEAT_INTERVAL:
                 continue
 
@@ -1258,4 +1280,4 @@ def initialize_bridge() -> None:
 
 if __name__ == "__main__":
     initialize_bridge()
-    app.run(host="0.0.0.0", port=Config.PROBE_PORT, debug=False)
+    app.run(host=Config.PROBE_HOST, port=Config.PROBE_PORT, debug=False)

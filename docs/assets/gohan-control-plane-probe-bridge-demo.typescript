@@ -1,0 +1,26 @@
+^D==> Demo workspace
+demo_dir=/tmp/gohan-demo-recording
+==> Building workspace
+==> Starting control-plane at http://127.0.0.1:3210
+==> Registering runtime agent
+==> Starting probe-bridge at http://127.0.0.1:3211
+==> Waiting for probe to publish heartbeat
+last_heartbeat=2026-04-23T11:01:43.659Z
+==> Confirming probe session tracking
+probe_session_id=session-demo-1
+==> Creating task
+task_id=22c30d95-4b0f-4a3d-bc5d-d80f9b91c752
+==> Starting task run
+==> Appending runtime event to session file
+==> Waiting for approval created from raw batch ingest
+approval_id=38d56940-bd1f-499c-8dc1-0774d6c5185e
+==> Resolving approval
+==> Waiting for final task state
+workflow_state=COMPLETED
+task_result=Weekly report is ready
+[TASK_COMPLETE]
+==> Logs
+control_plane_log=/tmp/gohan-demo-recording/control-plane.log
+probe_log=/tmp/gohan-demo-recording/probe-bridge.log
+
+Joint demo completed successfully.

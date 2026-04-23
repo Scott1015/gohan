@@ -212,8 +212,9 @@ export function createControlPlaneServer(
 
 if (import.meta.url === `file://${process.argv[1]}`) {
   const port = Number(process.env.PORT || 3100)
+  const host = process.env.HOST || "127.0.0.1"
   const { server } = createControlPlaneServer()
-  server.listen(port, () => {
-    console.log(`Gohan control plane listening on http://localhost:${port}`)
+  server.listen(port, host, () => {
+    console.log(`Gohan control plane listening on http://${host}:${port}`)
   })
 }

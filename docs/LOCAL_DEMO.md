@@ -1,125 +1,85 @@
 # Local Demo
 
-This repository now has a minimal runnable control-plane skeleton. The fastest way to show the project value is to walk one task through:
+The fastest way to show what Gohan is trying to be is to run the control plane and probe bridge together.
 
-1. create task
-2. start run
-3. ingest runtime event
-4. create approval
-5. resolve approval
-6. see task complete
+This demo proves a more realistic runtime path than the earlier single-process walkthrough:
 
-## Start
+1. a probe-managed runtime is seeded locally
+2. the probe bridge reports heartbeat into the control plane
+3. a task and task run are created
+4. a raw runtime event is appended to a session file
+5. the probe bridge batches and forwards that event
+6. the control plane correlates it back to the active task run
+7. an approval is created and then resolved
+8. the task finishes without losing runtime identity
+
+## Quick Start
+
+Prerequisites:
+
+- Node.js 20+
+- Python 3 with `flask` and `requests`
+
+Install once:
 
 ```bash
 npm install
-npm run build
-node apps/control-plane/dist/server.js
+python3 -m pip install -r services/probe-bridge/requirements.txt
 ```
 
-Or run the scripted version:
+Run the joint demo:
 
 ```bash
-./scripts/demo-control-plane.sh
+npm run demo:joint
 ```
 
-Default port:
+The script will:
 
-```text
-http://localhost:3100
-```
+- build the TypeScript workspace
+- start the control plane on `127.0.0.1:3210`
+- start the probe bridge on `127.0.0.1:3211`
+- seed a local runtime session manifest under a temporary demo directory
+- wait for probe heartbeat
+- create a task and task run
+- append an assistant event to the session file
+- wait for approval creation
+- resolve the approval
+- show the final task state and log file paths
 
-## 1. Create Task
+## Terminal Recording
+
+Generate a terminal recording plus a plain-text transcript:
 
 ```bash
-curl -s http://localhost:3100/tasks \
-  -H 'Content-Type: application/json' \
-  -d '{
-    "title": "Publish weekly report",
-    "agentId": "agent-7",
-    "requireApproval": true
-  }'
+npm run demo:record
 ```
 
-Save the returned `task.id`.
+That command writes:
 
-## 2. Start Task Run
+- `docs/assets/gohan-control-plane-probe-bridge-demo.typescript`
+- `docs/assets/gohan-control-plane-probe-bridge-demo.txt`
+
+The checked-in transcript is meant to make the first-run story easy to skim on GitHub without replay tooling.
+
+## Demo Shape
+
+The joint demo intentionally keeps the runtime simple:
+
+- one probe
+- one seeded runtime agent
+- one session file
+- one task run
+- one assistant completion event
+- one approval gate
+
+That is enough to show the control-plane boundary clearly without pretending the repo is already a full production runtime.
+
+## Fallback Single-Process Demo
+
+If you only want the smaller control-plane-only walkthrough:
 
 ```bash
-curl -s http://localhost:3100/tasks/<task-id>/runs \
-  -H 'Content-Type: application/json' \
-  -d '{
-    "runtimeRunId": "run-7",
-    "messageId": "session-7"
-  }'
+npm run demo:control-plane
 ```
 
-## 3. Ingest Runtime Event
-
-This simulates a probe or worker reporting that the agent finished and is waiting on a completion approval.
-
-```bash
-curl -s http://localhost:3100/runtime-events \
-  -H 'Content-Type: application/json' \
-  -d '{
-    "probeId": "probe-1",
-    "sessionId": "session-7",
-    "agentId": "agent-7",
-    "runtimeRunId": "run-7",
-    "eventType": "assistant",
-    "content": "Weekly report is ready\n[TASK_COMPLETE]",
-    "eventAt": "2026-04-22T10:05:00.000Z"
-  }'
-```
-
-Expected result:
-
-```text
-handled=true
-```
-
-## 4. Inspect Approval
-
-```bash
-curl -s http://localhost:3100/approvals
-```
-
-You should see one approval with:
-
-- `type=approval`
-- `status=pending`
-- `resolutionAction=complete_task`
-
-## 5. Resolve Approval
-
-Use the returned approval id:
-
-```bash
-curl -s http://localhost:3100/approvals/<approval-id>/resolve \
-  -H 'Content-Type: application/json' \
-  -d '{
-    "status": "approved",
-    "response": "Publish it"
-  }'
-```
-
-## 6. Inspect Final Task State
-
-```bash
-curl -s http://localhost:3100/tasks/<task-id>
-```
-
-Expected state:
-
-```text
-workflowState=COMPLETED
-```
-
-## Why This Demo Matters
-
-This is the first open source story Gohan needs to tell clearly:
-
-- runtime event correlation is separate from the agent runtime itself
-- approvals are runtime state transitions, not UI-only metadata
-- completion can be gated without losing execution identity
-- the control plane can coordinate remote runtimes through a thin event contract
+That path skips the probe bridge and directly posts runtime events to the control plane.

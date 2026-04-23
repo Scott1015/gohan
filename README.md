@@ -16,19 +16,22 @@ Gohan sits between agent builders, execution environments, and platform APIs. It
 
 ```bash
 npm install
-npm run demo
+python3 -m pip install -r services/probe-bridge/requirements.txt
+npm run demo:joint
 ```
 
-The demo walks one task through:
+The joint demo starts a control plane plus a probe bridge, then walks one task through:
 
-1. task creation
-2. task run start
-3. runtime event ingestion
-4. approval creation
-5. approval resolution
-6. task completion
+1. probe heartbeat
+2. task creation
+3. task run start
+4. raw runtime event batch ingestion from the probe
+5. approval creation
+6. approval resolution
+7. task completion
 
-See [docs/LOCAL_DEMO.md](docs/LOCAL_DEMO.md) for the manual flow.
+See [docs/LOCAL_DEMO.md](docs/LOCAL_DEMO.md) for the scripted flow, fallback single-process demo, and checked-in terminal transcript.
+The latest plain-text transcript lives at [docs/assets/gohan-control-plane-probe-bridge-demo.txt](docs/assets/gohan-control-plane-probe-bridge-demo.txt).
 
 ## Why Gohan Exists
 
@@ -96,7 +99,7 @@ The repository is still early, but it is no longer just a naming exercise. The c
 
 - an in-memory control-plane app with task, task-run, approval, and runtime-event routes
 - a public runtime protocol for runtime agents, probe heartbeats, and raw event batch ingestion
-- a local demo script that exercises task -> approval -> completion
+- a joint control-plane + probe-bridge demo that exercises heartbeat -> raw batch ingest -> approval -> completion
 - a probe-bridge baseline in Python that prefers the public Gohan protocol
 - a browser-worker mock loop with shared execution/result contracts
 - local tests plus GitHub Actions CI
