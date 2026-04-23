@@ -1,66 +1,120 @@
 # Gohan
 
-Kubernetes-inspired control plane for long-running agents.
+Open source runtime control plane for long-running agents and browser workers.
 
-Gohan is an early-stage open source extraction from the Goku project. It is focused on a narrow problem:
+Gohan is for the part that usually breaks after an agent already "works":
 
-**how to run agents and browser workers like managed workloads instead of fragile chat sessions.**
+- which task is running where
+- which runtime event belongs to which task run
+- whether the agent is still alive, blocked, or actually done
+- how to pause for approval or human input without losing execution identity
+- how to keep browser workloads out of long-lived chat/session state
 
-Most agent tooling is strong at one of these layers:
+Gohan sits between agent builders, execution environments, and platform APIs. It manages runtime lifecycle instead of prompt orchestration.
 
-- agent building: frameworks, SDKs, prompt graphs
-- agent observability: traces, evals, replay
-- agent execution tools: browser control, tool calling
+## Run The 5-Minute Demo
 
-Gohan focuses on the missing control-plane layer between them:
+```bash
+npm install
+npm run demo
+```
 
-- schedule and dispatch work
-- track runtime sessions and task runs
-- correlate execution events back to platform tasks
-- pause for approvals or human input
-- bridge remote runtimes through lightweight probes
-- route browser jobs to dedicated workers
+The demo walks one task through:
 
-## Positioning
+1. task creation
+2. task run start
+3. runtime event ingestion
+4. approval creation
+5. approval resolution
+6. task completion
 
-Gohan is not trying to be:
+See [docs/LOCAL_DEMO.md](docs/LOCAL_DEMO.md) for the manual flow.
+
+## Why Gohan Exists
+
+Agent tooling is strong at a few layers already:
+
+- SDKs and frameworks help build agents
+- tracing tools help observe them
+- browser/tool runtimes help execute them
+
+What is still weak in many teams is the runtime control-plane layer:
+
+- task/run state
+- session and runtime identity
+- human approval and input gates
+- browser work isolation
+- remote runtime bridging
+- heartbeat and online-state derivation
+
+That is the gap Gohan is trying to fill.
+
+## Where Gohan Fits
+
+Gohan is not trying to replace everything around it.
+
+- Agent SDKs build agents and tool graphs.
+- Temporal or Prefect orchestrate durable business workflows.
+- Kubernetes schedules compute and infrastructure workloads.
+- Gohan manages the runtime lifecycle of agent workloads: `Task`, `TaskRun`, `Approval`, runtime events, probe heartbeats, and browser-task boundaries.
+
+In other words: Gohan is not "another agent framework." It is the runtime control layer around already-existing agents.
+
+## Use Gohan When
+
+- you already have agents, but runtime state is still hand-rolled
+- approvals or human input need to be first-class runtime states
+- browser work should run in an isolated execution path
+- remote runtimes need to report back into one control plane
+- session ids, run ids, and workflow state are spreading across too many ad-hoc scripts
+
+## Gohan Is Not
 
 - another agent SDK
-- another workflow builder
 - another chat UI
 - another tracing-only product
-
-Gohan is trying to be:
-
-- a self-hosted runtime control plane for long-running agents
-- a place to manage task lifecycle, runtime identity, and execution state
-- a thin coordination layer between platform APIs and remote execution environments
-
-## Why This Exists
-
-Teams can build agents quickly today. What still breaks in production is runtime management:
-
-- Which task is running where?
-- Which session or runtime flow does this event belong to?
-- Is the agent alive, busy, blocked on approval, or actually dead?
-- How do browser jobs run without polluting long-lived chat state?
-- How do remote workers report back into one control plane?
-
-Gohan is being shaped around these runtime problems first.
+- a general-purpose workflow engine
+- a Kubernetes replacement
 
 ## Core Primitives
 
-The open source cut is expected to center on a small set of primitives:
+The open source cut is centered on a small set of primitives:
 
 - `AgentRuntime`: a managed execution target
 - `Task`: the user-facing unit of work
 - `TaskRun`: the concrete execution attempt for a task
 - `Approval`: a human approval or input gate
 - `RuntimeEvent`: normalized execution events from probes or workers
-- `BrowserTask`: a dedicated browser workload routed to a specialized worker
+- `BrowserTask`: a browser-bound workload routed to a dedicated worker
 - `BrowserTaskExecutionResult`: structured browser output returned to the control plane
 
-These names may still change as the extraction stabilizes.
+These names may still tighten further as the public model stabilizes.
+
+## What Works Today
+
+The repository is still early, but it is no longer just a naming exercise. The current extraction already includes:
+
+- an in-memory control-plane app with task, task-run, approval, and runtime-event routes
+- a public runtime protocol for runtime agents, probe heartbeats, and raw event batch ingestion
+- a local demo script that exercises task -> approval -> completion
+- a probe-bridge baseline in Python that prefers the public Gohan protocol
+- a browser-worker mock loop with shared execution/result contracts
+- local tests plus GitHub Actions CI
+
+## Current Limitations
+
+This is still an early-stage extraction from the internal Goku system. That means a few things are true at the same time:
+
+- the direction is intentional
+- the abstractions are real
+- the implementation is still incomplete
+
+Current limits to be aware of:
+
+- the control-plane app is still demo-grade and uses an in-memory store
+- some public interfaces will still change before a real `v0.1`
+- deployment and persistence stories are intentionally thin right now
+- the probe-bridge baseline is extracted from OpenClaw-oriented internals, while the public runtime protocol is being shaped to support broader adapters over time
 
 ## Architecture
 
@@ -68,9 +122,9 @@ These names may still change as the extraction stabilizes.
                  +---------------------------+
                  |      Gohan Control Plane  |
                  |---------------------------|
-                 | API / scheduler / state   |
-                 | task runs / approvals     |
-                 | runtime event correlation |
+                 | task API / task runs      |
+                 | approvals / runtime state |
+                 | event correlation         |
                  +-------------+-------------+
                                |
                +---------------+----------------+
@@ -80,70 +134,14 @@ These names may still change as the extraction stabilizes.
      |-------------------|            |-------------------|
      | session tracking  |            | isolated runs     |
      | event forwarding  |            | structured output |
-     | message injection |            | browser-specific  |
+     | heartbeat / send  |            | browser-specific  |
      +---------+---------+            +---------+---------+
                |                                |
                v                                v
         remote agent runtime              browser runtime
 ```
 
-## Initial Scope
-
-The first open source milestone is intentionally narrow:
-
-- runtime event ingestion
-- task and task-run state transitions
-- approval and human-input waiting states
-- probe heartbeat and online-state computation
-- browser task bridging contract
-
-The first milestone is intentionally not focused on:
-
-- billing
-- multi-tenant product packaging
-- polished team-management UX
-- every internal Goku feature
-
-## Current Status
-
-This repository is being created before the extraction is complete.
-
-Expect:
-
-- incomplete modules
-- changing interfaces
-- rough edges in naming
-- docs that stabilize before code does
-
-## Extraction Strategy
-
-The source project has more product surface than should be open sourced in the first cut. The extraction strategy is:
-
-1. keep the runtime control-plane core
-2. remove unrelated SaaS shell concerns
-3. preserve clean seams between control plane and execution plane
-4. publish a narrow but coherent system before expanding scope
-
-See [docs/EXTRACTION_PLAN.md](docs/EXTRACTION_PLAN.md).
-The current execution/control-plane handshake is documented in [docs/RUNTIME_PROTOCOL.md](docs/RUNTIME_PROTOCOL.md).
-Release-prep work is tracked in [docs/FIRST_RELEASE_CHECKLIST.md](docs/FIRST_RELEASE_CHECKLIST.md).
-Contributor workflow is documented in [CONTRIBUTING.md](CONTRIBUTING.md).
-License tradeoffs are summarized in [docs/LICENSE_OPTIONS.md](docs/LICENSE_OPTIONS.md).
-Basic GitHub Actions CI is defined in [.github/workflows/ci.yml](.github/workflows/ci.yml).
-Issue and PR hygiene is preconfigured under [.github](.github).
-The recommended first publish flow is documented in [docs/PUBLISH_SEQUENCE.md](docs/PUBLISH_SEQUENCE.md).
-
-## Roadmap
-
-- define stable core runtime data model
-- extract probe bridge with a minimal protocol
-- extract browser task worker contract
-- publish local development workflow
-- add a minimal demo showing task dispatch, waiting approval, and completion
-
-## Repo Layout
-
-This repo is structured as a small workspace so the runtime core can be extracted in layers:
+## Repository Layout
 
 ```text
 gohan/
@@ -156,25 +154,9 @@ gohan/
     contracts/
     core/
   docs/
-    ARCHITECTURE.md
-    EXTRACTION_PLAN.md
 ```
 
-## Design Principles
-
-- control plane and execution plane stay separate
-- execution events are the source of runtime truth
-- browser workloads are first-class, not hacked into chat loops
-- human approval is a runtime state, not an afterthought
-- keep the first open source version smaller than the internal system
-
-## Name
-
-Gohan is the open source runtime-focused extraction track from Goku.
-
 ## Development
-
-The repo uses a minimal npm workspace layout.
 
 Current first commands:
 
@@ -184,14 +166,21 @@ npm run typecheck
 npm test
 npm run demo
 npm run check:release
-node apps/control-plane/dist/server.js
-./scripts/demo-control-plane.sh
 ```
 
-The current in-memory control-plane demo is documented in [docs/LOCAL_DEMO.md](docs/LOCAL_DEMO.md).
+## Docs
 
-The current extracted boundaries are:
+- [docs/LOCAL_DEMO.md](docs/LOCAL_DEMO.md): manual demo flow
+- [docs/RUNTIME_PROTOCOL.md](docs/RUNTIME_PROTOCOL.md): public execution/control-plane handshake
+- [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md): architecture notes
+- [docs/EXTRACTION_PLAN.md](docs/EXTRACTION_PLAN.md): what belongs in the first open source cut
+- [CONTRIBUTING.md](CONTRIBUTING.md): contribution workflow
+- [docs/FIRST_RELEASE_CHECKLIST.md](docs/FIRST_RELEASE_CHECKLIST.md): release-prep checklist
+- [docs/LICENSE_OPTIONS.md](docs/LICENSE_OPTIONS.md): license tradeoffs
+- [docs/PUBLISH_SEQUENCE.md](docs/PUBLISH_SEQUENCE.md): recommended publish sequence
 
-- control-plane runtime core and in-memory HTTP demo
-- probe bridge skeleton with public runtime protocol fallback
-- browser worker public contract and minimal mock worker loop
+## Project Notes
+
+- Basic GitHub Actions CI lives in [.github/workflows/ci.yml](.github/workflows/ci.yml).
+- Issue and PR hygiene is preconfigured under [.github](.github).
+- The first open source version is intentionally narrower than the internal Goku platform.
