@@ -1,5 +1,7 @@
 # Gohan
 
+[English](README.md) | [中文](README.zh-CN.md)
+
 Open source runtime control plane for long-running agents and browser workers.
 
 Gohan is for the part that usually breaks after an agent already "works":
